@@ -1,0 +1,67 @@
+name: build_ErfanGSIs
+
+on:
+#  release:
+#    types: [published]
+#  push:
+#    branches:
+#      - master
+#    paths:
+#      - '.config'
+#  schedule:
+#    - cron: 0 8 * * 5
+  watch:
+    types: [started]
+    
+env:
+  ROM_URL: https://aecowos4oax6aoyf.node.ppio.cloud:35672/fsa167af8c.a.bdydns.com/1435501072/Firmware/Flyme/meizu18_Pro/9.3.0.0/cn/20220628163037/b2592ff7/update.zip
+  ROM_NAME: Flyme
+  BUILD_TYPE: ab
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    if: github.event.repository.owner.id == github.event.sender.id
+
+    steps:
+       - name: Checkout
+         uses: actions/checkout@master
+           
+       - name: Initialization environment
+         run: |
+            sudo -E apt-get -qq install git wget
+       
+       - name: Clone ErfanGSI Source Code
+         run: git clone --recurse-submodules https://github.com/erfanoabdi/ErfanGSIs.git ErfanGSIs
+         
+       - name: Fix exit
+         run: |
+              sed -i 's/\|\| exit 1//g' $GITHUB_WORKSPACE/ErfanGSIs/url2GSI.sh
+              sed -i 's/exit 1//g' $GITHUB_WORKSPACE/ErfanGSIs/url2GSI.sh
+       
+       - name: Setting up ErfanGSI requirements
+         run: |
+              cd $GITHUB_WORKSPACE/ErfanGSIs
+              mkdir ./output
+              sudo bash ./setup.sh
+       
+       - name: Download Stock Rom & Generate GSI
+         run: |
+              cd  $GITHUB_WORKSPACE/ErfanGSIs
+              sudo bash ./url2GSI.sh -c --$BUILD_TYPE $ROM_URL $ROM_NAME
+       
+       - name: Zip GSI  
+         run: |
+              cd $GITHUB_WORKSPACE/ErfanGSIs/output
+              mkdir final
+              zip -r final/GSI.zip ./*
+       
+       - name: Upload GSI to WeTransfer
+         run: |
+              cd $GITHUB_WORKSPACE/ErfanGSIs/output
+              curl -sL https://git.io/file-transfer | sh
+              ./transfer wet ./final/GSI.zip
+
+         
+            
