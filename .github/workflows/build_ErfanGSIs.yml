@@ -14,7 +14,7 @@ on:
     types: [started]
     
 env:
-  ROM_URL: https://aecowos4oax6aoyf.node.ppio.cloud:35672/fsa167af8c.a.bdydns.com/1435501072/Firmware/Flyme/meizu18_Pro/9.3.0.0/cn/20220628163037/b2592ff7/update.zip
+  ROM_URL: https://aecetfbama36ox53.node.ppio.cloud:35672/fsa167af8c.a.bdydns.com/1435501072/Firmware/Flyme/meizu18_Pro/9.2.4.2/cn/20211215151051/75024545/update.zip
   ROM_NAME: Flyme
   BUILD_TYPE: ab
   TZ: Asia/Shanghai
